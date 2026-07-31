@@ -1,0 +1,37 @@
+{
+  "name": "@gasolinaradar/collectors",
+  "version": "1.0.0",
+  "description": "Aggregated official @gasolinaradar fuel station collector libraries (miterd, dgeg)",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/aggregator.test.js",
+    "prepublishOnly": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gasolinaradar/collectors.git"
+  },
+  "homepage": "https://github.com/gasolinaradar/collectors#readme",
+  "bugs": {
+    "url": "https://github.com/gasolinaradar/collectors/issues"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@gasolinaradar/dgeg-collector": "^1.0.0",
+    "@gasolinaradar/miterd-collector": "^1.0.0"
+  }
+}
