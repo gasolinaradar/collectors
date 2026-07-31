@@ -11,3 +11,8 @@ test('aggregator re-exports the dgeg collector', () => {
   assert.equal(typeof aggregator.dgeg.createDgegCollector, 'function');
   assert.equal(typeof aggregator.dgeg.fetchStations, 'function');
 });
+
+test('aggregator re-exports the plenergy collector', () => {
+  assert.equal(typeof aggregator.plenergy.createPlenergyCollector, 'function');
+  assert.equal(typeof aggregator.plenergy.fetchStations, 'function');
+});

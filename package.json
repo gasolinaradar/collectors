@@ -1,7 +1,7 @@
 {
   "name": "@gasolinaradar/collectors",
-  "version": "1.0.0",
-  "description": "Aggregated official @gasolinaradar fuel station collector libraries (miterd, dgeg)",
+  "version": "1.1.0",
+  "description": "Aggregated official @gasolinaradar fuel station collector libraries (miterd, dgeg, plenergy)",
   "main": "src/index.js",
   "exports": {
     ".": "./src/index.js"
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@gasolinaradar/dgeg-collector": "^1.0.0",
-    "@gasolinaradar/miterd-collector": "^1.0.0"
+    "@gasolinaradar/miterd-collector": "^1.0.0",
+    "@gasolinaradar/plenergy-collector": "^1.0.0"
   }
 }

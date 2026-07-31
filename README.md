@@ -11,19 +11,21 @@ npm install @gasolinaradar/collectors
 ## Usage / Uso
 
 ```js
-const { miterd, dgeg } = require('@gasolinaradar/collectors');
+const { miterd, dgeg, plenergy } = require('@gasolinaradar/collectors');
 
 const miterdCollector = miterd.createMiterdCollector({ logger });
 const dgegCollector = dgeg.createDgegCollector({ logger });
+const plenergyCollector = plenergy.createPlenergyCollector({ logger });
 
 const esStations = await miterdCollector.fetch({ reportProgress });
 const ptStations = await dgegCollector.fetch({ reportProgress });
+const plenergyStations = await plenergyCollector.fetch({ reportProgress });
 ```
 
 Each collector follows the same contract / Cada collector sigue el mismo contrato:
 
 ```js
-{ name: 'miterd' | 'dgeg', country: 'ES' | 'PT', fetch(context) }
+{ name: 'miterd' | 'dgeg' | 'plenergy', country: 'ES' | 'PT', fetch(context) }
 ```
 
 ## Included collectors / Collectors incluidos
@@ -32,6 +34,7 @@ Each collector follows the same contract / Cada collector sigue el mismo contrat
 | ------ | ------- | ---- | -------------- |
 | `miterd` | [`@gasolinaradar/miterd-collector`](https://github.com/gasolinaradar/miterd-collector) | `miterd-collector` | ES |
 | `dgeg` | [`@gasolinaradar/dgeg-collector`](https://github.com/gasolinaradar/dgeg-collector) | `dgeg-collector` | PT |
+| `plenergy` | [`@gasolinaradar/plenergy-collector`](https://github.com/gasolinaradar/plenergy-collector) | `plenergy-collector` | ES |
 
 Each collector lives in **its own repository** and is published independently to npm. This package only declares them as dependencies and re-exports them. Adding a new collector means publishing it and adding it to the `dependencies` of this package (plus re-exporting it from `src/index.js`). Consumers do **not** need to change their dependency list.
 
@@ -46,6 +49,7 @@ Publica primero los collectors individuales y después este agregador:
 ```bash
 cd ../miterd-collector && npm publish
 cd ../dgeg-collector && npm publish
+cd ../plenergy-collector && npm publish
 cd ../collectors && npm publish
 ```
 
