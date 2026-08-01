@@ -11,23 +11,25 @@ npm install @gasolinaradar/collectors
 ## Usage / Uso
 
 ```js
-const { miterd, dgeg, plenergy, dgtEv } = require('@gasolinaradar/collectors');
+const { miterd, dgeg, plenergy, dgtEv, bonarea } = require('@gasolinaradar/collectors');
 
 const miterdCollector = miterd.createMiterdCollector({ logger });
 const dgegCollector = dgeg.createDgegCollector({ logger });
 const plenergyCollector = plenergy.createPlenergyCollector({ logger });
 const dgtEvCollector = dgtEv.createDgtEvCollector({ logger });
+const bonareaCollector = bonarea.createBonareaCollector({ logger });
 
 const esStations = await miterdCollector.fetch({ reportProgress });
 const ptStations = await dgegCollector.fetch({ reportProgress });
 const plenergyStations = await plenergyCollector.fetch({ reportProgress });
 const dgtEvStations = await dgtEvCollector.fetch({ reportProgress });
+const bonareaStations = await bonareaCollector.fetch({ reportProgress });
 ```
 
 Each collector follows the same contract / Cada collector sigue el mismo contrato:
 
 ```js
-{ name: 'miterd' | 'dgeg' | 'plenergy' | 'dgt-ev', country: 'ES' | 'PT', fetch(context) }
+{ name: 'miterd' | 'dgeg' | 'plenergy' | 'dgt-ev' | 'bonarea', country: 'ES' | 'PT', fetch(context) }
 ```
 
 ## Included collectors / Collectors incluidos
@@ -38,6 +40,7 @@ Each collector follows the same contract / Cada collector sigue el mismo contrat
 | `dgeg` | [`@gasolinaradar/dgeg-collector`](https://github.com/gasolinaradar/dgeg-collector) | `dgeg-collector` | PT |
 | `plenergy` | [`@gasolinaradar/plenergy-collector`](https://github.com/gasolinaradar/plenergy-collector) | `plenergy-collector` | ES |
 | `dgtEv` | [`@gasolinaradar/dgt-ev-collector`](https://github.com/gasolinaradar/dgt-ev-collector) | `dgtEv-collector` | ES |
+| `bonarea` | [`@gasolinaradar/bonarea-collector`](https://github.com/gasolinaradar/bonarea-collector) | `bonarea-collector` | ES |
 
 Each collector lives in **its own repository** and is published independently to npm. This package only declares them as dependencies and re-exports them. Adding a new collector means publishing it and adding it to the `dependencies` of this package (plus re-exporting it from `src/index.js`). Consumers do **not** need to change their dependency list.
 
@@ -54,6 +57,7 @@ cd ../miterd-collector && npm publish
 cd ../dgeg-collector && npm publish
 cd ../plenergy-collector && npm publish
 cd ../dgtEv-collector && npm publish
+cd ../bonarea-collector && npm publish
 cd ../collectors && npm publish
 ```
 

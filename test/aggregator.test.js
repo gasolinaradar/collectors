@@ -21,3 +21,8 @@ test('aggregator re-exports the dgt-ev collector', () => {
   assert.equal(typeof aggregator.dgtEv.createDgtEvCollector, 'function');
   assert.equal(typeof aggregator.dgtEv.fetchStations, 'function');
 });
+
+test('aggregator re-exports the bonarea collector', () => {
+  assert.equal(typeof aggregator.bonarea.createBonareaCollector, 'function');
+  assert.equal(typeof aggregator.bonarea.fetchStations, 'function');
+});
