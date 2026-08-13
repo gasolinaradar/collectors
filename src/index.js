@@ -3,6 +3,7 @@ const dgeg = require('@gasolinaradar/dgeg-collector');
 const plenergy = require('@gasolinaradar/plenergy-collector');
 const dgtEv = require('@gasolinaradar/dgt-ev-collector');
 const bonarea = require('@gasolinaradar/bonarea-collector');
+const matching = require('./matching');
 
 module.exports = {
   miterd,
@@ -10,4 +11,5 @@ module.exports = {
   plenergy,
   dgtEv,
   bonarea,
+  matching,
 };

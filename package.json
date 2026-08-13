@@ -15,7 +15,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node --test test/aggregator.test.js",
+    "test": "node --test test/",
     "prepublishOnly": "npm test"
   },
   "repository": {
