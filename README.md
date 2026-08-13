@@ -32,6 +32,51 @@ Each collector follows the same contract / Cada collector sigue el mismo contrat
 { name: 'miterd' | 'dgeg' | 'plenergy' | 'dgt-ev' | 'bonarea', country: 'ES' | 'PT', fetch(context) }
 ```
 
+Every station returned by `fetch()` is normalized to the same shape regardless of source, which is what makes cross-source matching possible:
+
+Cada estación devuelta por `fetch()` está normalizada con la misma forma independientemente de la fuente, lo que es lo que hace posible el cotejo entre fuentes:
+
+```js
+{
+  source, country, sourceStationId,
+  name, address, municipality, province, postalCode,
+  schedule, services,
+  location: { type: 'Point', coordinates: [lon, lat] },
+  prices,
+  lastUpdated,
+}
+```
+
+## Matching stations across sources / Cotejar estaciones entre fuentes
+
+The `matching` module compares normalized stations from different collectors (e.g. a MITERD station branded "PLENERGY" against the Plenergy collector's own stations) using geographic proximity plus name/address similarity, and returns a 0–100 confidence score. It never touches the network or a database — it's a pure function over whatever stations you already fetched.
+
+El módulo `matching` compara estaciones normalizadas de distintos collectors (p. ej. una estación de MITERD con rótulo "PLENERGY" frente a las propias estaciones del collector de Plenergy) usando proximidad geográfica más similitud de nombre/dirección, y devuelve una confianza de 0 a 100. No toca la red ni ninguna base de datos: es una función pura sobre las estaciones que ya hayas descargado.
+
+```js
+const { miterd, plenergy, matching } = require('@gasolinaradar/collectors');
+
+const miterdStations = await miterd.createMiterdCollector({ logger }).fetch({ reportProgress });
+const plenergyStations = await plenergy.createPlenergyCollector({ logger }).fetch({ reportProgress });
+
+const { pairs, groups } = matching.matchStations([...miterdStations, ...plenergyStations]);
+// groups: [{ stations: [miterdStation, plenergyStation], confidence: 92 }, ...]
+```
+
+If you designate a **primary source** (e.g. `miterd`, the government feed with all stations but only basic data), `enrichStations` fills the primary station's empty fields (`schedule`, `services`, `postalCode`, ...) using the matched secondary stations, without ever overwriting a field the primary already has — the primary source is configurable, so you can repoint it to a different collector later without changing your API code:
+
+Si designas una **fuente primaria** (p. ej. `miterd`, la fuente del gobierno con todas las estaciones pero solo datos básicos), `enrichStations` rellena los campos vacíos de la estación primaria (`schedule`, `services`, `postalCode`, ...) usando las estaciones secundarias que hagan match, sin sobrescribir nunca un campo que la primaria ya tenga — la fuente primaria es configurable, así que puedes cambiarla por otro collector más adelante sin tocar el código de tu API:
+
+```js
+const enrichedStations = matching.enrichStations([...miterdStations, ...plenergyStations], {
+  primarySource: 'miterd', // swap to another collector's `source` name later if needed
+});
+// one entry per miterd station, each with `sources` (which collectors contributed)
+// and `matchConfidence` (undefined when no match was found)
+```
+
+Both `minConfidence` (default 70) and `maxDistanceMeters` (default 500m) are configurable via `options` on every function — see `src/matching.js` for the full set of tunables (`weights`, `fillableFields`).
+
 ## Included collectors / Collectors incluidos
 
 | Export | Package | Repo | Country / País |
