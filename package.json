@@ -15,7 +15,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node --test test/",
+    "test": "node --test",
     "prepublishOnly": "npm test"
   },
   "repository": {
