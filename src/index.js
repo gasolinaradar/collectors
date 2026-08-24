@@ -3,6 +3,7 @@ const dgeg = require('@gasolinaradar/dgeg-collector');
 const plenergy = require('@gasolinaradar/plenergy-collector');
 const dgtEv = require('@gasolinaradar/dgt-ev-collector');
 const bonarea = require('@gasolinaradar/bonarea-collector');
+const andorra = require('@gasolinaradar/andorra-collector');
 const matching = require('./matching');
 
 module.exports = {
@@ -11,5 +12,6 @@ module.exports = {
   plenergy,
   dgtEv,
   bonarea,
+  andorra,
   matching,
 };
