@@ -26,3 +26,8 @@ test('aggregator re-exports the bonarea collector', () => {
   assert.equal(typeof aggregator.bonarea.createBonareaCollector, 'function');
   assert.equal(typeof aggregator.bonarea.fetchStations, 'function');
 });
+
+test('aggregator re-exports the andorra collector', () => {
+  assert.equal(typeof aggregator.andorra.createAndorraCollector, 'function');
+  assert.equal(typeof aggregator.andorra.fetchStations, 'function');
+});
