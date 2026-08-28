@@ -31,3 +31,15 @@ test('aggregator re-exports the andorra collector', () => {
   assert.equal(typeof aggregator.andorra.createAndorraCollector, 'function');
   assert.equal(typeof aggregator.andorra.fetchStations, 'function');
 });
+
+test('aggregator re-exports the repsol collector', () => {
+  assert.equal(typeof aggregator.repsol.createRepsolCollector, 'function');
+  assert.equal(typeof aggregator.repsol.fetchStations, 'function');
+});
+
+test('repsol collector matches the normalized contract', () => {
+  const collector = aggregator.repsol.createRepsolCollector({});
+  assert.equal(collector.name, 'repsol');
+  assert.equal(collector.country, 'ES');
+  assert.equal(typeof collector.fetch, 'function');
+});
