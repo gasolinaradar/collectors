@@ -37,6 +37,6 @@
     "@gasolinaradar/dgt-ev-collector": "^1.0.0",
     "@gasolinaradar/miterd-collector": "^1.0.0",
     "@gasolinaradar/plenergy-collector": "^1.0.0",
-    "@gasolinaradar/repsol-collector": "git+https://github.com/gasolinaradar/repsol-collector.git"
+    "@gasolinaradar/repsol-collector": "^1.0.0"
   }
 }
