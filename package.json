@@ -1,6 +1,6 @@
 {
   "name": "@gasolinaradar/collectors",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Aggregated official @gasolinaradar fuel station collector libraries (miterd, dgeg, plenergy, dgt-ev, bonarea, andorra, repsol)",
   "main": "src/index.js",
   "exports": {
@@ -34,7 +34,7 @@
     "@gasolinaradar/andorra-collector": "^1.0.0",
     "@gasolinaradar/bonarea-collector": "^1.0.0",
     "@gasolinaradar/dgeg-collector": "^1.0.0",
-    "@gasolinaradar/dgt-ev-collector": "^1.0.0",
+    "@gasolinaradar/dgt-ev-collector": "^1.5.1",
     "@gasolinaradar/miterd-collector": "^1.0.0",
     "@gasolinaradar/plenergy-collector": "^1.0.0",
     "@gasolinaradar/repsol-collector": "^1.0.0"
