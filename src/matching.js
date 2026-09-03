@@ -13,6 +13,19 @@ function clamp01(value) {
 }
 
 function haversineDistanceMeters(coordA, coordB) {
+  if (
+    !Array.isArray(coordA) || coordA.length !== 2 ||
+    !Number.isFinite(coordA[0]) || !Number.isFinite(coordA[1])
+  ) {
+    throw new TypeError('haversineDistanceMeters: coordA must be [lon, lat] with finite numbers');
+  }
+  if (
+    !Array.isArray(coordB) || coordB.length !== 2 ||
+    !Number.isFinite(coordB[0]) || !Number.isFinite(coordB[1])
+  ) {
+    throw new TypeError('haversineDistanceMeters: coordB must be [lon, lat] with finite numbers');
+  }
+
   const [lonA, latA] = coordA;
   const [lonB, latB] = coordB;
 
@@ -83,11 +96,13 @@ function scoreStationPair(stationA, stationB, options = {}) {
   const nameSimilarity = tokenSetSimilarity(stationA.name, stationB.name);
   const addressSimilarity = tokenSetSimilarity(stationA.address, stationB.address);
 
-  const weightSum = weights.distance + weights.name + weights.address;
+  const rawWeightSum = weights.distance + weights.name + weights.address;
+  const w = rawWeightSum === 0 ? DEFAULT_WEIGHTS : weights;
+  const weightSum = rawWeightSum || (DEFAULT_WEIGHTS.distance + DEFAULT_WEIGHTS.name + DEFAULT_WEIGHTS.address);
   const rawScore =
-    (weights.distance * distanceScore +
-      weights.name * nameSimilarity +
-      weights.address * addressSimilarity) /
+    (w.distance * distanceScore +
+      w.name * nameSimilarity +
+      w.address * addressSimilarity) /
     weightSum;
 
   return {
