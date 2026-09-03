@@ -185,3 +185,36 @@ test('enrichStations passes through unmatched primary stations untouched', () =>
   assert.equal(passthrough.matchConfidence, undefined);
   assert.deepEqual(passthrough.sources, [{ source: 'miterd', sourceStationId: 'IDEESS-2' }]);
 });
+
+test('haversineDistanceMeters throws on null/undefined coordinates', () => {
+  assert.throws(() => haversineDistanceMeters(null, [0, 0]), TypeError);
+  assert.throws(() => haversineDistanceMeters([0, 0], null), TypeError);
+  assert.throws(() => haversineDistanceMeters(undefined, [0, 0]), TypeError);
+  assert.throws(() => haversineDistanceMeters([0, 0], undefined), TypeError);
+});
+
+test('haversineDistanceMeters throws on non-numeric coordinates', () => {
+  assert.throws(() => haversineDistanceMeters(['a', 0], [0, 0]), TypeError);
+  assert.throws(() => haversineDistanceMeters([0, NaN], [0, 0]), TypeError);
+  assert.throws(() => haversineDistanceMeters([Infinity, 0], [0, 0]), TypeError);
+});
+
+test('haversineDistanceMeters throws on wrong-length arrays', () => {
+  assert.throws(() => haversineDistanceMeters([0], [0, 0]), TypeError);
+  assert.throws(() => haversineDistanceMeters([0, 0, 0], [0, 0]), TypeError);
+});
+
+test('scoreStationPair returns valid confidence with all-zero custom weights', () => {
+  const a = makeStation('miterd', '1', 'PLENERGY', 'Calle Mayor 1', [-3.7038, 40.4168]);
+  const b = makeStation('plenergy', 'p1', 'Plenergy', 'Calle Mayor 1', [-3.7038, 40.4168]);
+
+  const score = scoreStationPair(a, b, { weights: { distance: 0, name: 0, address: 0 } });
+  assert.ok(Number.isFinite(score.confidence), `confidence should be finite, got ${score.confidence}`);
+  assert.ok(score.confidence >= 0 && score.confidence <= 100);
+});
+
+test('scoreStationPair throws on null location.coordinates', () => {
+  const a = { ...makeStation('miterd', '1', 'X', 'Y', [0, 0]), location: { coordinates: null } };
+  const b = makeStation('plenergy', 'p1', 'X', 'Y', [0, 0]);
+  assert.throws(() => scoreStationPair(a, b), TypeError);
+});
