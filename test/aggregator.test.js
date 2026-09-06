@@ -37,9 +37,21 @@ test('aggregator re-exports the repsol collector', () => {
   assert.equal(typeof aggregator.repsol.fetchStations, 'function');
 });
 
+test('aggregator re-exports the ocm collector', () => {
+  assert.equal(typeof aggregator.ocm.createOcmCollector, 'function');
+  assert.equal(typeof aggregator.ocm.fetchStations, 'function');
+});
+
 test('repsol collector matches the normalized contract', () => {
   const collector = aggregator.repsol.createRepsolCollector({});
   assert.equal(collector.name, 'repsol');
+  assert.equal(collector.country, 'ES');
+  assert.equal(typeof collector.fetch, 'function');
+});
+
+test('ocm collector matches the normalized contract', () => {
+  const collector = aggregator.ocm.createOcmCollector({});
+  assert.equal(collector.name, 'ocm');
   assert.equal(collector.country, 'ES');
   assert.equal(typeof collector.fetch, 'function');
 });

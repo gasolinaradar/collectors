@@ -33,6 +33,7 @@ const {
   bonarea,
   andorra,
   repsol,
+  ocm,
 } = require('../src');
 
 // ---------------------------------------------------------------------------
@@ -556,4 +557,69 @@ test('repsol fetch() returns the normalized shape; a priceless product stays a s
   assert.strictEqual(station.prices.diesel, 1.419);
   assert.ok(!('adblue' in station.prices));
   assert.ok(station.services.includes('AdBlue'));
+});
+
+// ---------------------------------------------------------------------------
+// ocm  -> httpClient.get => raw array of POIs (OpenChargeMap); no prices
+// ---------------------------------------------------------------------------
+
+test('ocm fetch() returns the normalized shape with connectors and no prices', async () => {
+  const rawPoi = {
+    ID: 1001,
+    AddressInfo: {
+      Title: 'OCM Test',
+      AddressLine1: 'Calle OCM 1',
+      Town: 'Madrid',
+      StateOrProvince: 'Madrid',
+      Postcode: '28013',
+      Latitude: '40.4168',
+      Longitude: '-3.7038',
+    },
+    StatusTypeID: 50,
+    ConnectionTypes: [
+      { ConnectionTypeID: 28, PowerKW: 22, Voltage: 400, Amps: 32 },
+      // gap: connector with no power/voltage/amps -> normalized out entirely
+      { ConnectionTypeID: 27 },
+    ],
+  };
+
+  const calls = [];
+  const httpClient = {
+    async get(url, config) {
+      calls.push({ url, config });
+      return httpResponse([rawPoi]);
+    },
+  };
+
+  const collector = ocm.createOcmCollector({ httpClient, logger: silentLogger, url: 'mock://ocm' });
+  const stations = await collector.fetch();
+
+  assert.strictEqual(calls.length, 1);
+  assert.ok(calls[0].config && calls[0].config.params, 'ocm sends OCM query params');
+  assert.strictEqual(stations.length, 1);
+  const [station] = stations;
+
+  assert.strictEqual(station.source, 'ocm');
+  assert.strictEqual(station.country, 'ES');
+  assert.strictEqual(station.sourceStationId, 'ocm-1001');
+  assert.strictEqual(station.name, 'OCM Test');
+  assert.strictEqual(station.address, 'Calle OCM 1');
+  assert.strictEqual(station.municipality, 'Madrid');
+  assert.strictEqual(station.province, 'Madrid');
+  assert.strictEqual(station.postalCode, '28013');
+  assert.deepStrictEqual(station.location.coordinates, [-3.7038, 40.4168]);
+  assert.ok(station.lastUpdated instanceof Date, 'lastUpdated must be a Date');
+  assert.deepStrictEqual(station.services, ['ev_charging']);
+  assert.deepStrictEqual(station.connectors, [
+    { type: 'IEC_62196_T2', format: null, mode: null, maxPowerKw: 22, voltageV: 400, maxCurrentA: 32, typeKey: '28' },
+  ]);
+  assert.deepStrictEqual(station.connectorTypeKeys, ['28', '27']);
+  assert.strictEqual(station.status, 'AVAILABLE');
+
+  // connector gap: blank power/voltage/amps connector is dropped from `connectors`
+  // (but its type key lives on in `connectorTypeKeys`)
+  assert.strictEqual(station.connectors.length, 1);
+
+  // prices gap: ocm never carries fuel prices
+  assert.strictEqual(station.prices, undefined);
 });
