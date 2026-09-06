@@ -576,7 +576,7 @@ test('ocm fetch() returns the normalized shape with connectors and no prices', a
       Longitude: '-3.7038',
     },
     StatusTypeID: 50,
-    ConnectionTypes: [
+    Connections: [
       { ConnectionTypeID: 28, PowerKW: 22, Voltage: 400, Amps: 32 },
       // connector with no power/voltage/amps but a ConnectionTypeID is kept
       { ConnectionTypeID: 27 },
