@@ -578,7 +578,7 @@ test('ocm fetch() returns the normalized shape with connectors and no prices', a
     StatusTypeID: 50,
     ConnectionTypes: [
       { ConnectionTypeID: 28, PowerKW: 22, Voltage: 400, Amps: 32 },
-      // gap: connector with no power/voltage/amps -> normalized out entirely
+      // connector with no power/voltage/amps but a ConnectionTypeID is kept
       { ConnectionTypeID: 27 },
     ],
   };
@@ -612,13 +612,13 @@ test('ocm fetch() returns the normalized shape with connectors and no prices', a
   assert.deepStrictEqual(station.services, ['ev_charging']);
   assert.deepStrictEqual(station.connectors, [
     { type: 'IEC_62196_T2', format: null, mode: null, maxPowerKw: 22, voltageV: 400, maxCurrentA: 32, typeKey: '28' },
+    { type: 'IEC_62196_T2', format: null, mode: null, maxPowerKw: null, voltageV: null, maxCurrentA: null, typeKey: '27' },
   ]);
   assert.deepStrictEqual(station.connectorTypeKeys, ['28', '27']);
   assert.strictEqual(station.status, 'AVAILABLE');
 
-  // connector gap: blank power/voltage/amps connector is dropped from `connectors`
-  // (but its type key lives on in `connectorTypeKeys`)
-  assert.strictEqual(station.connectors.length, 1);
+  // connector kept even without power/voltage/amps, as long as it has a ConnectionTypeID
+  assert.strictEqual(station.connectors.length, 2);
 
   // prices gap: ocm never carries fuel prices
   assert.strictEqual(station.prices, undefined);
