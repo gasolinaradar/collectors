@@ -5,6 +5,7 @@ const dgtEv = require('@gasolinaradar/dgt-ev-collector');
 const bonarea = require('@gasolinaradar/bonarea-collector');
 const andorra = require('@gasolinaradar/andorra-collector');
 const repsol = require('@gasolinaradar/repsol-collector');
+const ocm = require('@gasolinaradar/ocm-collector');
 const matching = require('./matching');
 
 module.exports = {
@@ -15,5 +16,6 @@ module.exports = {
   bonarea,
   andorra,
   repsol,
+  ocm,
   matching,
 };
