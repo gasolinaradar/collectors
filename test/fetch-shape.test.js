@@ -610,9 +610,11 @@ test('ocm fetch() returns the normalized shape with connectors and no prices', a
   assert.deepStrictEqual(station.location.coordinates, [-3.7038, 40.4168]);
   assert.ok(station.lastUpdated instanceof Date, 'lastUpdated must be a Date');
   assert.deepStrictEqual(station.services, ['ev_charging']);
+  // connector types follow the official OCM ConnectionTypes table (ocm-collector >=1.0.6):
+  // ID 28 -> domesticF (CEE 7/4 Schuko), ID 27 -> teslaS (NACS / Tesla Supercharger)
   assert.deepStrictEqual(station.connectors, [
-    { type: 'IEC_62196_T2', format: null, mode: null, maxPowerKw: 22, voltageV: 400, maxCurrentA: 32, typeKey: '28' },
-    { type: 'IEC_62196_T2', format: null, mode: null, maxPowerKw: null, voltageV: null, maxCurrentA: null, typeKey: '27' },
+    { type: 'domesticF', format: null, mode: null, maxPowerKw: 22, voltageV: 400, maxCurrentA: 32, typeKey: '28' },
+    { type: 'teslaS', format: null, mode: null, maxPowerKw: null, voltageV: null, maxCurrentA: null, typeKey: '27' },
   ]);
   assert.deepStrictEqual(station.connectorTypeKeys, ['28', '27']);
   assert.strictEqual(station.status, 'AVAILABLE');
