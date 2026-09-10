@@ -6,6 +6,7 @@ const bonarea = require('@gasolinaradar/bonarea-collector');
 const andorra = require('@gasolinaradar/andorra-collector');
 const repsol = require('@gasolinaradar/repsol-collector');
 const ocm = require('@gasolinaradar/ocm-collector');
+const miteco = require('@gasolinaradar/miteco-collector');
 const matching = require('./matching');
 
 module.exports = {
@@ -17,5 +18,6 @@ module.exports = {
   andorra,
   repsol,
   ocm,
+  miteco,
   matching,
 };
