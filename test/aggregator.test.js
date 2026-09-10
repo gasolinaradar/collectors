@@ -55,3 +55,15 @@ test('ocm collector matches the normalized contract', () => {
   assert.equal(collector.country, 'ES');
   assert.equal(typeof collector.fetch, 'function');
 });
+
+test('aggregator re-exports the miteco collector', () => {
+  assert.equal(typeof aggregator.miteco.createMitecoCollector, 'function');
+  assert.equal(typeof aggregator.miteco.fetchStations, 'function');
+});
+
+test('miteco collector matches the normalized contract', () => {
+  const collector = aggregator.miteco.createMitecoCollector({});
+  assert.equal(collector.name, 'miteco');
+  assert.equal(collector.country, 'ES');
+  assert.equal(typeof collector.fetch, 'function');
+});

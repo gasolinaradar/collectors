@@ -34,6 +34,7 @@ const {
   andorra,
   repsol,
   ocm,
+  miteco,
 } = require('../src');
 
 // ---------------------------------------------------------------------------
@@ -624,4 +625,81 @@ test('ocm fetch() returns the normalized shape with connectors and no prices', a
 
   // prices gap: ocm never carries fuel prices
   assert.strictEqual(station.prices, undefined);
+});
+
+// ---------------------------------------------------------------------------
+// miteco  -> httpClient.post => UTF-16LE CSV buffer (RIPREE); connectors, no prices
+// ---------------------------------------------------------------------------
+
+function buildMitecoCsvBuffer(rows) {
+  const bom = Buffer.from([0xFF, 0xFE]);
+  const header = Object.keys(rows[0]).join(';');
+  const lines = [header];
+  for (const row of rows) {
+    lines.push(Object.values(row).join(';'));
+  }
+  const utf16 = lines.join('\r\n');
+  return Buffer.concat([bom, Buffer.from(utf16, 'utf-16le')]);
+}
+
+test('miteco fetch() returns the normalized shape with connectors and no prices', async () => {
+  const rawRow = {
+    'COD.INSTALACION': 'MIT-001',
+    'NOMBRE INSTALACION': 'MITECO Test',
+    'DIRECCIÓN': 'Calle Miteco 1',
+    MUNICIPIO: 'Madrid',
+    PROVINCIA: 'Madrid',
+    'CODIGO POSTAL': '28013',
+    LONGITUD: '-3,7038',
+    LATITUD: '40,4168',
+    'TIPO HORARIO APERTURA': '24h',
+    'HORARIO APERTURA': '',
+    'NOMBRE OPERADOR': 'Test Operator',
+    'ID. PUNTO DE RECARGA': 'EVSE-1',
+    'TIPO CONECTOR OCPI': 'IEC_62196_T2',
+    FORMATO: 'socket',
+    'TIPO DE CARGA': 'mode3',
+    'POTENCIA MAXIMA(W)': '22000',
+    VOLTAJE: '400',
+    INTENSIDAD: '32',
+    'FECHA DE ULTIMA MODIFICACION': '2026-09-01T10:00:00Z',
+  };
+
+  const csvBuffer = buildMitecoCsvBuffer([rawRow]);
+
+  const calls = [];
+  const httpClient = {
+    async post(url, body, config) {
+      calls.push({ url, body, config });
+      return httpResponse(csvBuffer);
+    },
+  };
+
+  const collector = miteco.createMitecoCollector({ httpClient, logger: silentLogger, url: 'mock://miteco' });
+  const stations = await collector.fetch();
+
+  assert.strictEqual(calls.length, 1);
+  assert.strictEqual(calls[0].config.responseType, 'arraybuffer');
+  assert.strictEqual(stations.length, 1);
+  const [station] = stations;
+
+  assert.strictEqual(station.source, 'miteco');
+  assert.strictEqual(station.country, 'ES');
+  assert.strictEqual(station.sourceStationId, 'miteco-MIT-001');
+  assert.strictEqual(station.name, 'MITECO Test');
+  assert.strictEqual(station.address, 'Calle Miteco 1');
+  assert.strictEqual(station.municipality, 'Madrid');
+  assert.strictEqual(station.province, 'Madrid');
+  assert.strictEqual(station.postalCode, '28013');
+  assert.deepStrictEqual(station.location.coordinates, [-3.7038, 40.4168]);
+  assert.ok(station.lastUpdated instanceof Date, 'lastUpdated must be a Date');
+  assert.deepStrictEqual(station.services, ['ev_charging']);
+  assert.deepStrictEqual(station.connectors, [
+    { type: 'iec62196T2', format: 'socket', mode: 'mode3', maxPowerKw: 22, voltageV: 400, maxCurrentA: 32 },
+  ]);
+  assert.strictEqual(station.connectors.length, 1);
+  assert.strictEqual(station.evseCount, 1);
+
+  // prices gap: miteco never carries fuel prices
+  assert.ok(!('prices' in station));
 });
