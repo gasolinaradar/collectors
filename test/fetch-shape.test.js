@@ -312,7 +312,7 @@ test('plenergy fetch() returns the normalized shape from inline prices without s
 // ---------------------------------------------------------------------------
 
 const DGT_EV_XML = `<?xml version="1.0" encoding="UTF-8"?>
-<payload>
+<payload xmlns:egi="http://www.dgt.es/egi">
   <egi:energyInfrastructureTablePublication>
     <egi:energyInfrastructureTable>
       <egi:energyInfrastructureSite>
@@ -367,12 +367,16 @@ test('dgt-ev fetch() returns the normalized shape with connectors and no prices'
   const stations = await collector.fetch();
 
   assert.strictEqual(calls.length, 1);
-  assert.strictEqual(calls[0].config.responseType, 'text'); // XML requested as text
+  assert.strictEqual(calls[0].config.responseType, 'stream'); // XML fetched as stream
   assert.strictEqual(stations.length, 1);
   const [station] = stations;
 
   // `connectors` is a documented dgt-ev extra on top of the shared contract
-  assertNormalizedShape(station, { source: 'dgt-ev', country: 'ES', extraKeys: ['connectors'] });
+  assertNormalizedShape(station, {
+    source: 'dgt-ev',
+    country: 'ES',
+    extraKeys: ['connectors', 'typeOfSite', 'authenticationMethods', 'operator', 'availability', 'reveLocationId'],
+  });
   assert.strictEqual(station.source, 'dgt-ev');
   assert.strictEqual(station.sourceStationId, 'DGT-EV-001');
   assert.strictEqual(station.name, 'Electrolinera Test');
