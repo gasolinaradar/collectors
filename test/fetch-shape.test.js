@@ -553,7 +553,9 @@ test('repsol fetch() returns the normalized shape; a priceless product stays a s
   assert.strictEqual(station.province, 'Madrid');
   assert.strictEqual(station.postalCode, '28901');
   assert.strictEqual(station.schedule, 'L-D: 24h');
-  assert.deepStrictEqual(station.services, ['Gasolina 95', 'Diesel', 'AdBlue']);
+  // repsol-collector >= 1.0.3: `services` holds ONLY the products that carry no price
+  // (priced fuels land in `prices` and are no longer duplicated into `services`).
+  assert.deepStrictEqual(station.services, ['AdBlue']);
   assert.deepStrictEqual(station.location.coordinates, [-3.7038, 40.4168]);
   assert.strictEqual(station.lastUpdated.getTime(), Date.parse('2026-09-02'));
 
